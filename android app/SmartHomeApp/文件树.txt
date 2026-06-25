@@ -1,0 +1,38 @@
+SmartHomeApp/
+└── app/
+    └── src/
+        └── main/
+            ├── AndroidManifest.xml
+            │
+            ├── java/
+            │   └── com/
+            │       └── smarthome/
+            │           └── app/
+            │               │
+            │               ├── fragment/
+            │               │   ├── AboutFragment.kt
+            │               │   ├── DashboardFragment.kt      ← 【修改】
+            │               │   ├── DeviceFragment.kt
+            │               │   └── SettingsFragment.kt
+            │               │
+            │               ├── model/
+            │               │   └── DeviceItem.kt             ← 【修改】
+            │               │
+            │               ├── adapter/                      ← 【新建文件夹】
+            │               │   └── DeviceAdapter.kt          ← 【新建】
+            │               │
+            │               └── view/                         ← 【新建文件夹】
+            │                   └── TouchScrollView.kt        ← 【新建】
+            │
+            └── res/
+                ├── drawable/
+                ├── layout/
+                │   ├── activity_main.xml
+                │   ├── fragment_dashboard.xml                ← 【修改】
+                │   └── item_control_switch.xml               ← 【已有】
+                ├── menu/
+                │   └── drawer_menu.xml
+                └── values/
+                    ├── colors.xml
+                    ├── strings.xml
+                    └── themes.xml

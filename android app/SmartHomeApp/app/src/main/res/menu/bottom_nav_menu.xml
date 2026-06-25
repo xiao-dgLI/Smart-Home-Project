@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_dashboard"
+        android:icon="@android:drawable/ic_menu_compass"
+        android:title="监测" />
+
+    <item
+        android:id="@+id/nav_control"
+        android:icon="@android:drawable/ic_menu_manage"
+        android:title="控制" />
+
+    <item
+        android:id="@+id/nav_rules"
+        android:icon="@android:drawable/ic_menu_agenda"
+        android:title="任务" />
+
+    <item
+        android:id="@+id/nav_notify"
+        android:icon="@android:drawable/ic_popup_reminder"
+        android:title="通知" />
+
+    <item
+        android:id="@+id/nav_settings"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:title="设置" />
+
+</menu>
