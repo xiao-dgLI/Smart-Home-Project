@@ -1,0 +1,73 @@
+SmartHomeApp/
+└── app/
+    └── src/
+        └── main/
+            ├── AndroidManifest.xml
+            │
+            ├── java/
+            │   └── com/
+            │       └── smarthome/
+            │           └── app/
+            │               │
+            │               ├── fragment/
+            │               │   ├── ControlFragment.kt
+            │               │   ├── DashboardFragment.kt
+            │               │   ├── NotificationFragment.kt
+            │               │   ├── RuleFragment.kt
+            │               │   └── SettingsFragment.kt
+            │               │
+            │               ├── cloud/
+            │               │   ├── DeviceBaseInfo.kt  
+            │               │   ├── NleCloudManager.kt  
+            │               │   ├── NleCloudMqttManager.kt  
+            │               │   ├── ProjectInfo.kt  
+            │               │   └── SensorPoint.kt
+            │               │
+            │               ├── model/
+            │               │   ├── ControlSwitch.kt       
+            │               │   ├── Rule.kt
+            │               │   ├── SensorDeviceltem.kt
+            │               │   └── SensorData
+            │               │
+            │               ├── adapter/   
+            │               │   ├── SensorCardAdapter.kt                 
+            │               │   └── ControlAdapter.kt          
+            │               │
+            │               ├── network/
+            │               │   └── ConnectionManager.kt  
+            │               │   
+            │               ├── Notification/
+            │               │   └── NotificationHelper.kt
+            │               │   
+            │               ├── view/                     
+            │               │   └── TouchScrollView.kt     
+            │               │ 
+            │               ├──MainActivity.kt
+            │               │ 
+            │               └──MainViewModel 
+            └── res/
+                ├── drawable/
+                ├── layout/
+                │   ├── activity_main.xml
+                │   ├── dialog_add_rule.xml
+                │   ├── dialog_edit_switch.xml
+                │   ├── fragment_control.xml
+                │   ├── fragment_dashboard.xml  
+                │   ├── fragment_notification.xml
+                │   ├── fragment_rule.xml
+                │   ├── fragment_settings.xml
+                │   ├── item_sdd_switch.xml
+                │   ├── item_control_switch.xml
+                │   ├── item_sensor_card.xml
+                │   └── item_rule.xml
+                ├── menu/
+                │   └── bottom_nav_menu.xml
+                └── values/
+                │   ├── colors.xml
+                │   ├── strings.xml
+                │   └── themes.xml
+                │ 
+                └── AndroidManifest.xml
+
+这是我一个项目的文件树，我将使用你来完善里面已有的功能或者添加，修改功能，在添加或修改功能时候你需要哪个文件的代码和我说
+

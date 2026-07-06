@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- 图标选择 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="图标"
+            android:textSize="14sp"
+            android:textColor="#757575" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="12dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/icon1"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:text="💡"
+                    android:textSize="24sp"
+                    android:gravity="center"
+                    android:background="@android:drawable/editbox_background"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/icon2"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:text="🌀"
+                    android:textSize="24sp"
+                    android:gravity="center"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/icon3"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:text="📺"
+                    android:textSize="24sp"
+                    android:gravity="center"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/icon4"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:text="🔌"
+                    android:textSize="24sp"
+                    android:gravity="center"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/icon5"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:text="🚪"
+                    android:textSize="24sp"
+                    android:gravity="center"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/icon6"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:text="🔊"
+                    android:textSize="24sp"
+                    android:gravity="center"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/icon7"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:text="🌡"
+                    android:textSize="24sp"
+                    android:gravity="center"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/icon8"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:text="💧"
+                    android:textSize="24sp"
+                    android:gravity="center"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/icon9"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:text="☀"
+                    android:textSize="24sp"
+                    android:gravity="center"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/icon10"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:text="🔒"
+                    android:textSize="24sp"
+                    android:gravity="center"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/icon11"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:text="🚗"
+                    android:textSize="24sp"
+                    android:gravity="center"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/icon12"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:text="⚡"
+                    android:textSize="24sp"
+                    android:gravity="center" />
+
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <!-- 名称 -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="设备名称"
+            android:layout_marginBottom="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="客厅灯" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 节点地址 -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="节点地址（设备标识符）"
+            android:layout_marginBottom="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etNodeAddr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="0x0004" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 开启指令 -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="开启指令 (JSON)"
+            android:layout_marginBottom="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etOnCmd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text='{"type":"control","node":"0x0004","action":"on"}'
+                android:inputType="textMultiLine"
+                android:minLines="2"
+                android:fontFamily="monospace"
+                android:textSize="12sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 关闭指令 -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="关闭指令 (JSON)">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etOffCmd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text='{"type":"control","node":"0x0004","action":"off"}'
+                android:inputType="textMultiLine"
+                android:minLines="2"
+                android:fontFamily="monospace"
+                android:textSize="12sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+</ScrollView>

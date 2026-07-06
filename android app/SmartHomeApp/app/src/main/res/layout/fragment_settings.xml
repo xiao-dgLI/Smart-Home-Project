@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="连接设置"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#212121"
+            android:layout_marginBottom="16dp" />
+
+        <!-- 连接状态 -->
+        <TextView
+            android:id="@+id/tvSettingsStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="未连接"
+            android:textSize="16sp"
+            android:textColor="#F44336"
+            android:padding="12dp"
+            android:background="#FFEBEE"
+            android:layout_marginBottom="20dp" />
+
+        <!-- WiFi -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="WiFi 连接 (TCP)"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:hint="服务器 IP 地址">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etHost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="192.168.1.100"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:hint="端口号">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPort"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="8080"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnConnectWifi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="WiFi 连接"
+            android:textSize="16sp"
+            app:icon="@android:drawable/ic_menu_share" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E0E0E0"
+            android:layout_marginVertical="20dp" />
+
+        <!-- 蓝牙 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="蓝牙连接 (Bluetooth)"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnConnectBt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="搜索蓝牙设备"
+            android:textSize="16sp"
+            style="@style/Widget.Material3.Button.TonalButton"
+            app:icon="@android:drawable/ic_menu_share" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E0E0E0"
+            android:layout_marginVertical="20dp" />
+
+        <!-- 新大陆云平台 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="新大陆云平台"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:hint="账号">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etCloudAccount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:singleLine="true" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:hint="密码">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etCloudPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:singleLine="true" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 登录按钮 -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCloudLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="登录云平台"
+            android:textSize="16sp"
+            app:icon="@android:drawable/ic_menu_share" />
+
+        <TextView
+            android:id="@+id/tvCloudLoginStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="未登录"
+            android:textSize="13sp"
+            android:textColor="#757575"
+            android:padding="8dp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- 项目选择 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="选择项目"
+            android:textSize="14sp"
+            android:textColor="#616161"
+            android:layout_marginBottom="4dp" />
+
+        <Spinner
+            android:id="@+id/spProject"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginBottom="12dp"
+            android:enabled="false" />
+
+        <!-- 连接云平台按钮 -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnConnectCloud"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="连接云平台"
+            android:textSize="16sp"
+            android:enabled="false"
+            style="@style/Widget.Material3.Button.TonalButton" />
+
+        <!-- 设备列表 -->
+        <TextView
+            android:id="@+id/tvCloudStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="13sp"
+            android:textColor="#757575"
+            android:padding="8dp"
+            android:layout_marginBottom="4dp" />
+
+        <!-- 设备列表展示 -->
+        <LinearLayout
+            android:id="@+id/layoutDeviceList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:background="#F5F5F5"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E0E0E0"
+            android:layout_marginVertical="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="开源地址：https://github.com/xiao-dgLI/Smart-Home-Project/"
+            android:textSize="13sp"
+            android:textColor="#757575"
+            android:textIsSelectable="true"
+            android:layout_marginBottom="3dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="bug反映：z2058078884@gmail.com"
+            android:textSize="13sp"
+            android:textColor="#757575"
+            android:textIsSelectable="true"
+            android:layout_marginBottom="10dp" />
+
+        <!-- 断开按钮 -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDisconnect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="断开连接"
+            android:textSize="16sp"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:textColor="#F44336"
+            app:strokeColor="#F44336" />
+
+    </LinearLayout>
+</ScrollView>
