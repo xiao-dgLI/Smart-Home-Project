@@ -137,7 +137,7 @@ POST /Strategys
 {
   "DeviceID": 设备ID,
   "Kind":类型,
-  "Expression": "{APITag} > 30",
+  "Expression": "{设备名称}>30",
   "StrategyVariableList": [],
   "StrategyActionList": [{"ApiTag":"nl","SetValue":"1","Delay":0}],
   "StrategyRunTimeList": [{"Period":1,"Day":0}]
@@ -162,7 +162,7 @@ POST /Strategys
 |------|------|-----|
 | DeviceID | GatewayID | “设备ID” |
 | Kind | 设备控制 | 1 |
-| Expression | 条件表达式 | "{APITag} > 30" |
+| Expression | 条件表达式 | "{设备名称}>30" |
 | StrategyVariableList | 必须为空数组 | [] |
 | Period | 1=每日, 2=每周, 3=每月 | 1 |
 | SetValue | "1"=开, "0"=关 | "1" |
