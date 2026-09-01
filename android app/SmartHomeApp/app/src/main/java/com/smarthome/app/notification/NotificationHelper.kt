@@ -58,6 +58,7 @@ class NotificationHelper(private val context: Context) {
                     context, Manifest.permission.POST_NOTIFICATIONS
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
+                android.util.Log.w("NotifHelper", "POST_NOTIFICATIONS 权限未授予")
                 return
             }
         }
@@ -72,7 +73,7 @@ class NotificationHelper(private val context: Context) {
         )
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(title)
             .setContentText(message)
             .setStyle(NotificationCompat.BigTextStyle().bigText(message))
@@ -82,41 +83,42 @@ class NotificationHelper(private val context: Context) {
             .setVibrate(longArrayOf(0, 300, 200, 300))
             .build()
 
+        android.util.Log.d("NotifHelper", "发送通知 id=$notifId title=$title")
         NotificationManagerCompat.from(context).notify(notifId, notification)
     }
 
-    fun sendTempAlert(temp: Float, threshold: Float, isAbove: Boolean) {
+    fun sendTempAlert(deviceName: String, temp: Float, threshold: Float, isAbove: Boolean) {
         val direction = if (isAbove) "高于" else "低于"
         sendNotification(
-            "🌡 温度告警",
+            "🌡 ${deviceName}温度告警",
             "当前温度 ${String.format("%.1f", temp)}°C，已${direction}阈值 ${String.format("%.1f", threshold)}°C",
             NOTIF_TEMP
         )
     }
 
-    fun sendHumiAlert(humi: Float, threshold: Float, isAbove: Boolean) {
+    fun sendHumiAlert(deviceName: String, humi: Float, threshold: Float, isAbove: Boolean) {
         val direction = if (isAbove) "高于" else "低于"
         sendNotification(
-            "💧 湿度告警",
+            "💧 ${deviceName}湿度告警",
             "当前湿度 ${String.format("%.1f", humi)}%RH，已${direction}阈值 ${String.format("%.1f", threshold)}%RH",
             NOTIF_HUMI
         )
     }
 
-    fun sendLightAlert(light: Int, threshold: Int, isAbove: Boolean) {
+    fun sendLightAlert(deviceName: String, light: Int, threshold: Int, isAbove: Boolean) {
         val direction = if (isAbove) "高于" else "低于"
         sendNotification(
-            "☀ 光照告警",
+            "☀ ${deviceName}光照告警",
             "当前光照 ${light} lux，已${direction}阈值 ${threshold} lux",
             NOTIF_LIGHT
         )
     }
 
-    fun sendPirAlert(detected: Boolean) {
+    fun sendPirAlert(deviceName: String, detected: Boolean) {
         if (detected) {
-            sendNotification("🚶 人体检测", "检测到有人进入区域", NOTIF_PIR)
+            sendNotification("🚶 ${deviceName}人体检测", "检测到有人进入区域", NOTIF_PIR)
         } else {
-            sendNotification("🚶 人体检测", "区域内已无人", NOTIF_PIR)
+            sendNotification("🚶 ${deviceName}人体检测", "区域内已无人", NOTIF_PIR)
         }
     }
 
@@ -128,36 +130,61 @@ class NotificationHelper(private val context: Context) {
         )
     }
 
-    fun sendFlameAlert(detected: Boolean) {
+    fun sendFlameAlert(deviceName: String, detected: Boolean) {
         if (detected) {
             sendNotification(
-                "🔥 火焰报警!",
+                "🔥 ${deviceName}火焰报警!",
                 "检测到火焰！请立即检查设备安全状况，远离危险区域！",
                 NOTIF_FLAME
             )
         } else {
             sendNotification(
-                "🔥 火焰解除",
+                "🔥 ${deviceName}火焰解除",
                 "火焰信号已消失，确认安全后请检查设备。",
                 NOTIF_FLAME
             )
         }
     }
 
-    fun sendGasAlert(value: Int, threshold: Int, isAbove: Boolean) {
+    fun sendGasAlert(deviceName: String, value: Int, threshold: Int, isAbove: Boolean) {
         if (isAbove) {
             sendNotification(
-                "💨 可燃气泄漏报警!",
+                "💨 ${deviceName}可燃气泄漏报警!",
                 "可燃气浓度超标! 当前值: $value，阈值: $threshold\n" +
                         "请立即开窗通风，关闭气源，远离现场！",
                 NOTIF_GAS
             )
         } else {
             sendNotification(
-                "💨 可燃气浓度恢复",
+                "💨 ${deviceName}可燃气浓度恢复",
                 "可燃气浓度已降至安全范围。当前值: $value，阈值: $threshold",
                 NOTIF_GAS
             )
         }
+    }
+
+    /**
+     * 云平台传感器阈值告警
+     * @param sensorName 传感器名称
+     * @param deviceName 设备名称
+     * @param currentValue 当前值
+     * @param threshold 阈值
+     * @param unit 单位
+     * @param isAbove true=高于阈值告警，false=低于阈值告警
+     */
+    fun sendCloudSensorAlert(
+        sensorName: String,
+        deviceName: String,
+        currentValue: Float,
+        threshold: Float,
+        unit: String,
+        isAbove: Boolean
+    ) {
+        val direction = if (isAbove) "高于" else "低于"
+        val title = "📡 传感器告警: $sensorName"
+        val message = "设备: $deviceName\n" +
+                "当前值: ${String.format("%.1f", currentValue)} $unit\n" +
+                "已${direction}阈值: ${String.format("%.1f", threshold)} $unit"
+        sendNotification(title, message)
     }
 }

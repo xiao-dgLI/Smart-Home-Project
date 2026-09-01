@@ -41,7 +41,6 @@ data class Rule(
     var runTimeDay: Int = 0,
     var runTimeSlots: List<RunTimeSlot> = emptyList()
 ) {
-    /** 兼容旧的单时间字段读取 */
     val runTimeHour: Int get() = runTimeSlots.firstOrNull()?.hour ?: 8
     val runTimeMinute: Int get() = runTimeSlots.firstOrNull()?.minute ?: 0
 }

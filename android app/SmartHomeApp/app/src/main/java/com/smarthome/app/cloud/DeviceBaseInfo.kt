@@ -5,6 +5,7 @@ data class DeviceBaseInfo(
     val Name: String = "",
     val IsOnline: Boolean = false,
     val ProjectID: Int = 0,
-    val SerialNumber: String = "",   // 设备序列号（clientId）
-    val SecretKey: String = ""       // 传输密钥（用于计算 password）
+    val SerialNumber: String = "",   // 设备标识（Tag）
+    val SecretKey: String = "",      // 传输密钥
+    val Protocol: Int = 0            // 通讯协议：1=TCP, 2=MQTT, 3=HTTP
 )

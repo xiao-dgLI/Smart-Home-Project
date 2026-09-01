@@ -3,11 +3,18 @@ package com.smarthome.app.network
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import com.smarthome.app.model.Rule
 import com.smarthome.app.model.SensorData
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
@@ -49,12 +56,34 @@ class ConnectionManager {
     var isConnected: Boolean = false
         private set
 
+    // ========== StateFlow (协程友好) ==========
+    private val _connectionStatus = MutableStateFlow("未连接")
+    val connectionStatus: StateFlow<String> = _connectionStatus.asStateFlow()
+
+    private val _sensorDataFlow = MutableSharedFlow<SensorData>(extraBufferCapacity = 1)
+    val sensorDataFlow: SharedFlow<SensorData> = _sensorDataFlow.asSharedFlow()
+
+    private val _controlAckFlow = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    val controlAckFlow: SharedFlow<String> = _controlAckFlow.asSharedFlow()
+
+    private val _ruleAckFlow = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    val ruleAckFlow: SharedFlow<String> = _ruleAckFlow.asSharedFlow()
+
+    private val _errorFlow = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    val errorFlow: SharedFlow<String> = _errorFlow.asSharedFlow()
+
+    private val _logFlow = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    val logFlow: SharedFlow<String> = _logFlow.asSharedFlow()
+
+    // ========== Handler (向后兼容) ==========
     private var handler: Handler? = null
     private val gson = Gson()
 
     fun setHandler(h: Handler) {
         handler = h
     }
+
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     // WiFi
 
@@ -168,43 +197,52 @@ class ConnectionManager {
     private fun processReceivedData(raw: String) {
         Log.d(TAG, "收到: $raw")
 
-        //  纯文本格式优先处理
+        // 纯文本格式优先处理
         when {
             raw.startsWith("STATUS:") -> {
-                // "STATUS:1:1,2:0,3:0,4:0" 交给 MainViewModel 解析
                 sendMsg(MSG_CONTROL_ACK, raw)
+                _controlAckFlow.tryEmit(raw)
                 return
             }
             raw.startsWith("T:") -> {
                 try {
                     val temp = raw.substringAfter("T:").trim().toFloat()
-                    sendMsg(MSG_SENSOR_DATA, SensorData(temp = temp))
+                    val data = SensorData(temp = temp)
+                    sendMsg(MSG_SENSOR_DATA, data)
+                    _sensorDataFlow.tryEmit(data)
                 } catch (_: Exception) {}
                 return
             }
             raw.startsWith("H:") -> {
                 try {
                     val humi = raw.substringAfter("H:").trim().toFloat()
-                    sendMsg(MSG_SENSOR_DATA, SensorData(humi = humi))
+                    val data = SensorData(humi = humi)
+                    sendMsg(MSG_SENSOR_DATA, data)
+                    _sensorDataFlow.tryEmit(data)
                 } catch (_: Exception) {}
                 return
             }
             raw.startsWith("F:") -> {
                 try {
                     val flame = raw.substringAfter("F:").trim().toInt()
-                    sendMsg(MSG_SENSOR_DATA, SensorData(flame = flame))
+                    val data = SensorData(flame = flame)
+                    sendMsg(MSG_SENSOR_DATA, data)
+                    _sensorDataFlow.tryEmit(data)
                 } catch (_: Exception) {}
                 return
             }
             raw.startsWith("G:") -> {
                 try {
                     val gas = raw.substringAfter("G:").trim().toInt()
-                    sendMsg(MSG_SENSOR_DATA, SensorData(gas = gas))
+                    val data = SensorData(gas = gas)
+                    sendMsg(MSG_SENSOR_DATA, data)
+                    _sensorDataFlow.tryEmit(data)
                 } catch (_: Exception) {}
                 return
             }
             raw.startsWith("CONNECTED:") -> {
                 sendMsg(MSG_LOG, "设备确认: $raw")
+                _logFlow.tryEmit("设备确认: $raw")
                 return
             }
         }
@@ -225,12 +263,15 @@ class ConnectionManager {
                         timestamp = map["timestamp"] as? String ?: ""
                     )
                     sendMsg(MSG_SENSOR_DATA, data)
+                    _sensorDataFlow.tryEmit(data)
                 }
                 "control" -> {
                     sendMsg(MSG_CONTROL_ACK, raw)
+                    _controlAckFlow.tryEmit(raw)
                 }
                 "rule_ack" -> {
                     sendMsg(MSG_RULE_ACK, raw)
+                    _ruleAckFlow.tryEmit(raw)
                 }
             }
         } catch (_: JsonSyntaxException) {
@@ -310,11 +351,12 @@ class ConnectionManager {
 
     private fun sendMsg(what: Int, obj: Any) {
         val h = handler ?: return
-        h.sendMessage(h.obtainMessage(what, obj))
+        mainHandler.post { h.sendMessage(h.obtainMessage(what, obj)) }
     }
 
     private fun sendLog(msg: String) {
         Log.d(TAG, msg)
         sendMsg(MSG_LOG, msg)
+        _logFlow.tryEmit(msg)
     }
 }

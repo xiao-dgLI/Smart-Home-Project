@@ -27,6 +27,8 @@ class ControlAdapter(
         notifyDataSetChanged()
     }
 
+    fun getItems(): List<ControlSwitch> = items
+
     fun animateToggle(index: Int, newIsOn: Boolean, recyclerView: RecyclerView?) {
         val holder = recyclerView?.findViewHolderForAdapterPosition(index)
         if (holder is SwitchViewHolder) {

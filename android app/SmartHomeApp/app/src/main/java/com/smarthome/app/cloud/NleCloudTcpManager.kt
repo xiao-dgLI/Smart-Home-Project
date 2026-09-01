@@ -8,10 +8,9 @@ import java.net.Socket
 import java.util.Timer
 import java.util.TimerTask
 
-/**
- * NleCloud TCP 通信管理器
- * 用于 Android App 与云平台之间的 TCP 长连接，实现快速命令下发
- */
+
+ // NleCloud TCP 通信管理器
+
 class NleCloudTcpManager {
 
     companion object {
@@ -35,9 +34,9 @@ class NleCloudTcpManager {
     private var onCommandReceived: ((String) -> Unit)? = null
     private var onConnectionChanged: ((Boolean, String) -> Unit)? = null
 
-    /**
-     * 设置回调
-     */
+
+    // 设置回调
+
     fun setOnCommandListener(listener: (String) -> Unit) {
         onCommandReceived = listener
     }
@@ -46,9 +45,9 @@ class NleCloudTcpManager {
         onConnectionChanged = listener
     }
 
-    /**
-     * 连接到云平台 TCP 服务器
-     */
+
+    // 连接到云平台 TCP 服务器
+
     fun connect(tag: String, key: String) {
         deviceTag = tag
         deviceKey = key
@@ -104,9 +103,9 @@ class NleCloudTcpManager {
         }.start()
     }
 
-    /**
-     * 发送原始字符串
-     */
+
+    // 发送原始字符串
+
     private fun sendRaw(data: String) {
         outputStream?.let { os ->
             os.write((data + "\n").toByteArray())
@@ -115,9 +114,9 @@ class NleCloudTcpManager {
         }
     }
 
-    /**
-     * 启动心跳定时器
-     */
+
+    //启动心跳定时器
+
     private fun startHeartbeat() {
         heartbeatTimer?.cancel()
         heartbeatTimer = Timer().apply {
@@ -137,9 +136,6 @@ class NleCloudTcpManager {
         }
     }
 
-    /**
-     * 启动接收线程
-     */
     private fun startReceiveThread() {
         receiveThread = Thread {
             try {
@@ -160,9 +156,6 @@ class NleCloudTcpManager {
         receiveThread?.start()
     }
 
-    /**
-     * 断开连接
-     */
     fun disconnect() {
         isConnected = false
         heartbeatTimer?.cancel()
@@ -184,8 +177,5 @@ class NleCloudTcpManager {
         Log.d(TAG, "TCP 已断开")
     }
 
-    /**
-     * 是否已连接
-     */
     fun isConnected(): Boolean = isConnected
 }

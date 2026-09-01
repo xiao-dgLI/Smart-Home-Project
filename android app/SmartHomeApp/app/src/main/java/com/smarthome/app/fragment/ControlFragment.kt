@@ -4,10 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -17,10 +23,13 @@ import com.smarthome.app.MainViewModel
 import com.smarthome.app.R
 import com.smarthome.app.adapter.ControlAdapter
 import com.smarthome.app.model.ControlSwitch
+import com.smarthome.app.viewmodel.ControlViewModel
+import kotlinx.coroutines.launch
 
 class ControlFragment : Fragment() {
 
     private lateinit var vm: MainViewModel
+    private val controlVm: ControlViewModel by viewModels()
     private lateinit var adapter: ControlAdapter
     private lateinit var recyclerView: RecyclerView
 
@@ -45,7 +54,11 @@ class ControlFragment : Fragment() {
                 val sw = switches[index]
                 val newIsOn = !sw.isOn
                 adapter.animateToggle(index, newIsOn, recyclerView)
-                vm.toggleSwitchSilent(index)
+                val accepted = controlVm.toggleSwitchSilent(vm, index)
+                if (!accepted) {
+                    adapter.animateToggle(index, !newIsOn, recyclerView)
+                    Toast.makeText(requireContext(), "设备离线，操作失败", Toast.LENGTH_SHORT).show()
+                }
             },
             onEdit = { index ->
                 val sw = vm.switches.value?.getOrNull(index) ?: return@ControlAdapter
@@ -87,15 +100,172 @@ class ControlFragment : Fragment() {
 
         recyclerView.adapter = adapter
 
-        vm.switches.observe(viewLifecycleOwner) { list ->
-            adapter.submitList(list.toList())
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                vm.switches.collect { list ->
+                    adapter.submitList(list.toList())
+                }
+            }
         }
 
         view.findViewById<FloatingActionButton>(R.id.fabAddSwitch).setOnClickListener {
-            showAddSwitchDialog()
+            showChooseAddSwitchTypeDialog()
         }
 
         return view
+    }
+
+    /**
+     * 选择添加开关类型对话框
+     */
+    private fun showChooseAddSwitchTypeDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("选择添加方式")
+            .setItems(
+                arrayOf(
+                    "📱 添加本地开关（ZigBee设备）",
+                    "➕ 创建云平台执行器"
+                )
+            ) { _, which ->
+                when (which) {
+                    0 -> showAddSwitchDialog()
+                    1 -> showCreateCloudActuatorDialog()
+                }
+            }
+            .setNegativeButton("取消", null)
+            .show()
+    }
+
+    /**
+     * 创建云平台执行器对话框
+     */
+    private fun showCreateCloudActuatorDialog() {
+        val devices = vm.getSavedDeviceList()
+        if (devices.isEmpty()) {
+            Toast.makeText(requireContext(), "暂无云平台设备，请先连接项目", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val dialogView = layoutInflater.inflate(R.layout.dialog_create_cloud_actuator, null)
+
+        val spDevice = dialogView.findViewById<android.widget.Spinner>(R.id.spDevice)
+        val etApiTag = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etApiTag)
+        val etName = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etName)
+        val spOperType = dialogView.findViewById<android.widget.Spinner>(R.id.spOperType)
+
+        // 设备列表
+        val deviceNames = devices.map { "${it.Name} (ID: ${it.DeviceID})" }.toTypedArray()
+        spDevice.adapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, deviceNames)
+
+        // 操作类型（执行器专用）
+        val operTypes = arrayOf("开关型 (1)", "开关停型 (2)", "按钮型 (3)", "刻度型 (4)")
+        spOperType.adapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, operTypes)
+        spOperType.setSelection(0) // 默认开关型
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("创建云平台执行器")
+            .setView(dialogView)
+            .setPositiveButton("创建") { _, _ ->
+                val deviceIndex = spDevice.selectedItemPosition
+                if (deviceIndex !in devices.indices) {
+                    Toast.makeText(requireContext(), "请选择设备", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+
+                val apiTag = etApiTag.text.toString().trim()
+                val name = etName.text.toString().trim()
+                val operTypeIndex = spOperType.selectedItemPosition
+
+                if (apiTag.isBlank()) {
+                    Toast.makeText(requireContext(), "请输入执行器标识", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+                if (name.isBlank()) {
+                    Toast.makeText(requireContext(), "请输入执行器名称", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+
+                val device = devices[deviceIndex]
+                val operType = operTypeIndex + 1 // 1:开关型, 2:开关停型, 3:按钮型, 4:刻度型
+
+                // 检测重复并自动编号
+                val existingNames = mutableSetOf<String>()
+                val existingApiTags = mutableSetOf<String>()
+                for (item in controlVm.getCloudSensorDeviceItems(vm)) {
+                    existingNames.add(item.name)
+                    item.cloudApiTag?.let { existingApiTags.add(it) }
+                }
+                for (sw in controlVm.getCloudActuatorSwitches(vm)) {
+                    existingNames.add(sw.name)
+                    existingApiTags.add(sw.cloudApiTag)
+                }
+
+                var finalName = name
+                var finalApiTag = apiTag
+                var nameChanged = false
+                var apiTagChanged = false
+
+                if (name in existingNames) {
+                    var counter = 2
+                    while ("${name}_$counter" in existingNames) counter++
+                    finalName = "${name}_$counter"
+                    nameChanged = true
+                }
+                if (apiTag in existingApiTags) {
+                    var counter = 2
+                    while ("${apiTag}_$counter" in existingApiTags) counter++
+                    finalApiTag = "${apiTag}_$counter"
+                    apiTagChanged = true
+                }
+
+                if (nameChanged || apiTagChanged) {
+                    val message = buildString {
+                        if (nameChanged) append("名称「$name」已存在，建议改为「$finalName」\n")
+                        if (apiTagChanged) append("标识名「$apiTag」已存在，建议改为「$finalApiTag」")
+                    }
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("检测到重复")
+                        .setMessage(message)
+                        .setPositiveButton("使用建议名称创建") { _, _ ->
+                            doCreateCloudActuator(device, finalName, finalApiTag, operType)
+                        }
+                        .setNeutralButton("自行修改") { _, _ -> }
+                        .setNegativeButton("取消", null)
+                        .show()
+                } else {
+                    doCreateCloudActuator(device, finalName, finalApiTag, operType)
+                }
+            }
+            .setNegativeButton("取消", null)
+            .show()
+    }
+
+    /**
+     * 执行创建云平台执行器
+     */
+    private fun doCreateCloudActuator(
+        device: com.smarthome.app.cloud.DeviceBaseInfo,
+        name: String, apiTag: String, operType: Int
+    ) {
+        Toast.makeText(requireContext(), "正在创建执行器...", Toast.LENGTH_SHORT).show()
+
+        controlVm.createCloudActuator(
+            mainVm = vm,
+            deviceId = device.DeviceID,
+            apiTag = apiTag,
+            name = name,
+            operType = operType
+        ) { success, message ->
+            activity?.runOnUiThread {
+                if (success) {
+                    Toast.makeText(requireContext(), "执行器创建成功: $name", Toast.LENGTH_SHORT).show()
+                    // 刷新云平台设备列表
+                    vm.refreshCloudDevices()
+                } else {
+                    Toast.makeText(requireContext(), "创建失败: $message", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun showAddSwitchDialog() {
@@ -137,7 +307,7 @@ class ControlFragment : Fragment() {
                         """{"type":"control","node":"$nodeAddr","action":"off"}"""
                     }
                 )
-                vm.addSwitch(sw)
+                controlVm.addSwitch(vm, sw)
                 Toast.makeText(requireContext(), "已添加: ${sw.name}", Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("取消", null)
@@ -172,7 +342,7 @@ class ControlFragment : Fragment() {
                 sw.name = etName.text.toString().ifBlank { sw.name }
                 sw.icon = selectedIcon
                 sw.nodeAddr = etNode.text.toString().ifBlank { sw.nodeAddr }
-                vm.updateSwitch(index, sw)
+                controlVm.updateSwitch(vm, index, sw)
             }
             .setNegativeButton("取消", null)
             .show()
@@ -202,7 +372,7 @@ class ControlFragment : Fragment() {
                 val cmd = input.text.toString().trim()
                 if (cmd.isNotBlank()) {
                     if (isOnCmd) sw.onCommand = cmd else sw.offCommand = cmd
-                    vm.updateSwitch(index, sw)
+                    controlVm.updateSwitch(vm, index, sw)
                     Toast.makeText(requireContext(), "指令已更新", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -227,7 +397,7 @@ class ControlFragment : Fragment() {
             )
             .setPositiveButton("确认纠错") { _, _ ->
                 // 只翻转本地状态，不发送指令
-                vm.correctSwitchState(index)
+                controlVm.correctSwitchState(vm, index)
                 adapter.updateStateFromDevice(index, sw.isOn, recyclerView)
                 Toast.makeText(
                     requireContext(),
@@ -240,19 +410,43 @@ class ControlFragment : Fragment() {
     }
 
     private fun showDeleteConfirm(index: Int) {
-        val switches = vm.switches.value ?: return
+        val switches = adapter.getItems()
         if (index !in switches.indices) return
         val sw = switches[index]
 
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle("删除设备")
-            .setMessage("确定要删除 \"${sw.name}\" 吗？")
-            .setPositiveButton("删除") { _, _ ->
-                vm.removeSwitch(index)
-                Toast.makeText(requireContext(), "已删除", Toast.LENGTH_SHORT).show()
-            }
-            .setNegativeButton("取消", null)
-            .show()
+        if (sw.isCloud) {
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("删除设备")
+                .setPositiveButton("同时删除云平台执行器") { _, _ ->
+                    val devId = sw.cloudDeviceId
+                    val apiTag = sw.cloudApiTag
+                    Toast.makeText(requireContext(), "正在删除云平台执行器...", Toast.LENGTH_SHORT).show()
+                    controlVm.deleteCloudActuator(devId, apiTag) { success ->
+                        activity?.runOnUiThread {
+                            controlVm.removeSwitch(vm, index)
+                            val tip = if (success) "已从云平台和本地删除: ${sw.name}"
+                            else "云平台删除失败，已从本地移除: ${sw.name}"
+                            Toast.makeText(requireContext(), tip, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                .setNeutralButton("仅删除本地卡片") { _, _ ->
+                    controlVm.removeSwitch(vm, index)
+                    Toast.makeText(requireContext(), "已从本地删除: ${sw.name}", Toast.LENGTH_SHORT).show()
+                }
+                .setNegativeButton("取消", null)
+                .show()
+        } else {
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("删除设备")
+                .setMessage("确定要删除 \"${sw.name}\" 吗？")
+                .setPositiveButton("删除") { _, _ ->
+                    controlVm.removeSwitch(vm, index)
+                    Toast.makeText(requireContext(), "已删除: ${sw.name}", Toast.LENGTH_SHORT).show()
+                }
+                .setNegativeButton("取消", null)
+                .show()
+        }
     }
 
     private fun setupIconPicker(dialogView: View, defaultIcon: String = "💡") {

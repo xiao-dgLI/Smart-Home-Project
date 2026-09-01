@@ -4,8 +4,10 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.smarthome.app.cloud.ServiceEventBus
 import com.smarthome.app.databinding.ActivityMainBinding
 import com.smarthome.app.fragment.*
+import com.smarthome.app.util.UpdateChecker
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,6 +36,21 @@ class MainActivity : AppCompatActivity() {
 
         // 延迟执行自动登录，确保 Activity 已准备好
         viewModel.startAutoLogin()
+
+        // 检查版本更新
+        val pkgInfo = packageManager.getPackageInfo(packageName, 0)
+        val currentVersion = pkgInfo.versionName ?: "1.0.0"
+        UpdateChecker.checkOnStartup(this, currentVersion)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        ServiceEventBus.emitAppForeground(true)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        ServiceEventBus.emitAppForeground(false)
     }
 
     private fun loadFragment(fragment: Fragment) {

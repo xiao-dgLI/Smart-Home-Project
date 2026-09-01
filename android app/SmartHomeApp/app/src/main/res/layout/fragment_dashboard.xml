@@ -34,7 +34,7 @@
                 android:layout_centerVertical="true"
                 style="@style/Widget.Material3.Button.TonalButton" />
 
-            <!-- ★ 更新按钮 -->
+            <!-- 更新按钮 -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRefreshCloud"
                 android:layout_width="wrap_content"
@@ -46,18 +46,6 @@
                 android:layout_marginEnd="8dp"
                 style="@style/Widget.Material3.Button.OutlinedButton" />
         </RelativeLayout>
-
-        <!-- 连接状态 -->
-        <TextView
-            android:id="@+id/tvConnectionStatus"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="未连接"
-            android:textColor="#F44336"
-            android:textSize="14sp"
-            android:padding="8dp"
-            android:background="#FFEBEE"
-            android:layout_marginBottom="16dp" />
 
         <!-- 传感器卡片列表 -->
         <androidx.recyclerview.widget.RecyclerView

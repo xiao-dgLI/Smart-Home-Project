@@ -7,19 +7,26 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.smarthome.app.MainActivity
 import com.smarthome.app.MainViewModel
+import kotlinx.coroutines.launch
 import com.smarthome.app.R
 import com.smarthome.app.model.Rule
 import com.smarthome.app.model.RunTimeSlot
+import com.smarthome.app.viewmodel.RuleViewModel
 
 class RuleFragment : Fragment() {
 
     private lateinit var vm: MainViewModel
+    private val ruleVm: RuleViewModel by viewModels()
 
     // 定时任务对话框临时数据
     private val timeSlots = mutableListOf<RunTimeSlot>()
@@ -36,7 +43,7 @@ class RuleFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         val adapter = RuleAdapter(
-            onToggle = { pos -> vm.toggleRule(pos) },
+            onToggle = { pos -> ruleVm.toggleRule(vm, pos) },
             onDelete = { pos ->
                 val rules = vm.rules.value
                 if (rules != null && pos in rules.indices) {
@@ -45,17 +52,31 @@ class RuleFragment : Fragment() {
                     MaterialAlertDialogBuilder(requireContext())
                         .setTitle("确认删除")
                         .setMessage("确定要删除任务「${rule.name}」$suffix 吗？")
-                        .setPositiveButton("删除") { _, _ -> vm.removeRule(pos) }
+                        .setPositiveButton("删除") { _, _ -> ruleVm.removeRule(vm, pos) }
                         .setNegativeButton("取消", null)
                         .show()
                 }
             },
-            onRetry = { pos -> vm.manualRetryRule(pos) }
+            onRetry = { pos -> ruleVm.manualRetryRule(vm, pos) }
         )
         recyclerView.adapter = adapter
 
-        vm.rules.observe(viewLifecycleOwner) { rules ->
-            adapter.submitList(rules.toList())
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                vm.rules.collect { rules ->
+                    adapter.submitList(rules.toList())
+                }
+            }
+        }
+        // 云平台连接后自动加载策略
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                vm.cloudConnected.collect { connected ->
+                    if (connected) {
+                        vm.loadCloudStrategies()
+                    }
+                }
+            }
         }
 
         view.findViewById<FloatingActionButton>(R.id.fabAddRule).setOnClickListener {
@@ -65,10 +86,12 @@ class RuleFragment : Fragment() {
         return view
     }
 
-    // ==================== 第一步：策略类型 ====================
+    // 第一步：策略类型
 
     private fun showAddRuleTypeDialog() {
-        if (!vm.cloudManager.isConnected()) {
+        //判断云平台是否连接
+        if (!(requireActivity().application as com.smarthome.app.MainApplication).cloudRepository.isConnected()) {
+            //没有就只显示本地创建本地策略
             showLocalRuleDialog()
             return
         }
@@ -90,7 +113,7 @@ class RuleFragment : Fragment() {
             .show()
     }
 
-    // ==================== 第二步：任务模式 ====================
+    // 第二步：任务模式
 
     private fun showCloudTaskModeDialog() {
         MaterialAlertDialogBuilder(requireContext())
@@ -162,7 +185,7 @@ class RuleFragment : Fragment() {
             .setView(dialogView)
             .setPositiveButton("确定") { _, _ ->
                 try {
-                    vm.addRule(Rule(
+                    ruleVm.addRule(vm, Rule(
                         name = etName.text.toString().ifBlank { "规则" },
                         sensorType = sensorValues[spSensor.selectedItemPosition],
                         operator = operatorValues[spOperator.selectedItemPosition],
@@ -180,10 +203,10 @@ class RuleFragment : Fragment() {
             .show()
     }
 
-    // ==================== 云平台 - 条件任务 ====================
+    // 云平台 - 条件任务
 
     private fun showCloudConditionDialog() {
-        // ★ 用设备列表（有正确DeviceID），不用sensorMetaCache
+        // 用设备列表（有正确DeviceID），不用sensorMetaCache
         val sensorItems = vm.getCloudSensorDeviceItems()
         val actuatorItems = vm.getCloudActuatorSwitches()
 
@@ -208,10 +231,10 @@ class RuleFragment : Fragment() {
         val operatorValues = arrayOf(">", "<", "==", ">=", "<=")
         val operatorLabels = arrayOf("大于 (>)", "小于 (<)", "等于 (==)", "大于等于 (>=)", "小于等于 (<=)")
 
-        // ★ 传感器列表：显示 名称[设备ID]
+        // 传感器列表：显示 名称[设备ID]
         spSensor.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item,
             sensorItems.map { "${it.name} [${it.cloudDeviceId}]" }.toTypedArray())
-        // ★ 执行器列表：显示 名称[设备ID]
+        // 执行器列表：显示 名称[设备ID]
         spDevice.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item,
             actuatorItems.map { "${it.name} [${it.cloudDeviceId}]" }.toTypedArray())
         spOperator.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, operatorLabels)
@@ -246,7 +269,7 @@ class RuleFragment : Fragment() {
                     val cmdText = if (actionValue == "1") "开启" else "关闭"
                     val autoName = "当${sName}${operator}${threshold}时${cmdText}${aName}"
 
-                    vm.addRule(Rule(
+                    ruleVm.addRule(vm, Rule(
                         name = autoName,
                         operator = operator,
                         threshold = threshold,
@@ -270,7 +293,7 @@ class RuleFragment : Fragment() {
             .show()
     }
 
-    // ==================== 云平台 - 定时任务 ====================
+    // 云平台 - 定时任务
 
     private fun showCloudTimedRuleDialog() {
         val actuators = vm.getCloudActuators()
@@ -359,7 +382,7 @@ class RuleFragment : Fragment() {
                         else -> 0
                     }
 
-                    vm.addRule(Rule(
+                    ruleVm.addRule(vm, Rule(
                         name = etName.text.toString().ifBlank { "定时任务" },
                         operator = ">",
                         threshold = 0f,
@@ -382,7 +405,7 @@ class RuleFragment : Fragment() {
             .show()
     }
 
-    // ==================== 时间段管理 ====================
+    // 时间段管理
 
     private fun rebuildTimeSlots() {
         slotContainer.removeAllViews()
@@ -429,7 +452,7 @@ class RuleFragment : Fragment() {
 }
 
 
-// ==================== Adapter ====================
+// Adapter
 
 class RuleAdapter(
     private val onToggle: (Int) -> Unit,
