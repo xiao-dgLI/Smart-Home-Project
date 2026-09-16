@@ -15,7 +15,7 @@ class DataStoreRepository(context: Context) {
     private val prefs = context.getSharedPreferences(Constants.PREF_NAME, Context.MODE_PRIVATE)
     val gson: Gson = GsonBuilder().disableHtmlEscaping().create()
 
-    // ========== Rules ==========
+    // Rules
 
     fun saveRules(rules: List<Rule>) {
         prefs.edit().putString("rules", gson.toJson(rules)).apply()
@@ -31,7 +31,7 @@ class DataStoreRepository(context: Context) {
         }
     }
 
-    // ========== Switches ==========
+    // Switches
 
     fun saveSwitches(switches: List<ControlSwitch>) {
         prefs.edit().putString("switches", gson.toJson(switches)).apply()
@@ -47,7 +47,7 @@ class DataStoreRepository(context: Context) {
         }
     }
 
-    // ========== Sensor Cache ==========
+    // Sensor Cache
 
     fun isSensorCacheCleared(): Boolean = prefs.getBoolean("sensor_cache_cleared", false)
 
@@ -58,7 +58,7 @@ class DataStoreRepository(context: Context) {
             .apply()
     }
 
-    // ========== Sensor Devices ==========
+    // Sensor Devices
 
     fun saveSensorDevices(devices: List<SensorDeviceItem>) {
         prefs.edit().putString("sensor_devices", gson.toJson(devices)).apply()
@@ -86,7 +86,7 @@ class DataStoreRepository(context: Context) {
         SensorDeviceItem(icon = "\uD83D\uDD25", name = "火焰检测", sensorType = "flame", unit = "")
     )
 
-    // ========== Notification Settings ==========
+    // Notification Settings
 
     fun saveNotificationSettings(settings: List<NotificationSetting>) {
         prefs.edit().putString("notification_settings", gson.toJson(settings)).apply()
@@ -102,7 +102,7 @@ class DataStoreRepository(context: Context) {
         }
     }
 
-    // ========== Project Settings ==========
+    // Project Settings
 
     fun saveProjectSettings(projectId: Int, projectName: String) {
         prefs.edit()
@@ -117,7 +117,7 @@ class DataStoreRepository(context: Context) {
         return Pair(projectId, projectName)
     }
 
-    // ========== Notification Settings (Legacy) ==========
+    // Notification Settings (Legacy)
 
     fun saveNotifSettings(settings: Map<String, Any>) {
         val editor = prefs.edit()
@@ -151,7 +151,7 @@ class DataStoreRepository(context: Context) {
         "notification_settings" to (prefs.getString("notification_settings", null) ?: "")
     )
 
-    // ========== Connection Mode ==========
+    // Connection Mode
 
     fun saveConnectionMode(mode: String, host: String = "", port: Int = 0) {
         prefs.edit()

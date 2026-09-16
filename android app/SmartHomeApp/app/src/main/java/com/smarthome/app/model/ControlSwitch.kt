@@ -13,6 +13,6 @@ data class ControlSwitch(
     var cloudApiTag: String = "",
     var operType: Int = 1
 ) {
-    // 判断是否为云平台设备：source为cloud，或有cloudApiTag（兼容旧数据）
+    // 判断是否为云平台设备：source为cloud，或有cloudApiTag
     val isCloud: Boolean get() = source == "cloud" || cloudApiTag.isNotEmpty()
 }

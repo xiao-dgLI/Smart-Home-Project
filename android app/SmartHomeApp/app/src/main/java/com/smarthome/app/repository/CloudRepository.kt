@@ -11,26 +11,26 @@ class CloudRepository(
     private val deviceManager: CloudDeviceManager
 ) {
 
-    // ========== 连接状态 ==========
+    // 连接状态
 
     fun isConnected(): Boolean = cloudManager.isConnected()
     fun getAccessToken(): String? = cloudManager.getAccessToken()
     fun setAccessToken(token: String) = cloudManager.setAccessToken(token)
     fun disconnect() = cloudManager.disconnect()
 
-    // ========== 凭证管理 ==========
+    // 凭证管理
 
     fun getSavedCredentials(): Pair<String, String> = cloudManager.getSavedCredentials()
     fun saveMqttCredentials(tag: String, securityKey: String) = cloudManager.saveMqttCredentials(tag, securityKey)
     fun getSavedTag(): String = cloudManager.getSavedTag()
     fun getSavedSecurityKey(): String = cloudManager.getSavedSecurityKey()
 
-    // ========== 登录 ==========
+    // 登录
 
     suspend fun login(account: String, password: String): Pair<Boolean, String> =
         deviceManager.login(account, password)
 
-    // ========== 项目管理 ==========
+    // 项目管理
 
     suspend fun getProjects(): List<ProjectInfo> = deviceManager.getProjects()
 
@@ -41,7 +41,7 @@ class CloudRepository(
 
     suspend fun connectToProject(projectId: Int): Boolean = deviceManager.connectToProject(projectId)
 
-    // ========== 设备管理 ==========
+    // 设备管理
 
     suspend fun getDevices(projectId: Int): List<DeviceBaseInfo> = deviceManager.getDevices(projectId)
 
@@ -54,7 +54,7 @@ class CloudRepository(
 
     suspend fun deleteDevice(deviceId: Int): Boolean = deviceManager.deleteDevice(deviceId)
 
-    // ========== 传感器 ==========
+    // 传感器
 
     suspend fun getProjectSensors(projectId: Int): List<SensorPoint> =
         deviceManager.getProjectSensors(projectId)
@@ -81,13 +81,13 @@ class CloudRepository(
     suspend fun deleteSensor(deviceId: Int, apiTag: String): Boolean =
         deviceManager.deleteSensor(deviceId, apiTag)
 
-    // ========== 控制命令 ==========
+    // 控制命令
 
     fun sendCommand(deviceId: Int, apiTag: String, value: String, callback: ((Boolean) -> Unit)? = null) {
         cloudManager.sendCommand(deviceId, apiTag, value, callback)
     }
 
-    // ========== 策略管理 ==========
+    // 策略管理
 
     suspend fun getStrategies(projectId: Int): List<Map<String, Any?>> =
         deviceManager.getStrategies(projectId)
@@ -126,13 +126,13 @@ class CloudRepository(
         cloudManager.enableStrategy(id, enable, callback)
     }
 
-    // ========== 设备在线状态 ==========
+    // 设备在线状态
 
     fun getDevicesStatus(deviceIds: List<Int>, callback: (Map<Int, Boolean>) -> Unit) {
         cloudManager.getDevicesStatus(deviceIds, callback)
     }
 
-    // ========== NleCloudManager 直接访问 ==========
+    // NleCloudManager 直接访问
 
     val nleCloudManager: NleCloudManager get() = cloudManager
 

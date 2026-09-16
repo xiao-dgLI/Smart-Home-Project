@@ -15,9 +15,9 @@ import com.smarthome.app.repository.DataStoreRepository
 import com.smarthome.app.repository.NotificationRepository
 import kotlinx.coroutines.launch
 
-/**
- * 规则 ViewModel — 规则CRUD、本地/云规则同步、定时任务管理
- */
+
+ // 规则 ViewModel — 规则CRUD、本地/云规则同步、定时任务管理
+
 class RuleViewModel(application: Application) : AndroidViewModel(application) {
 
     private val app = application as MainApplication
@@ -29,7 +29,7 @@ class RuleViewModel(application: Application) : AndroidViewModel(application) {
     private val pendingTimeouts = mutableMapOf<Long, Runnable>()
     private val retryRunnables = mutableMapOf<Long, Runnable>()
 
-    // ========== 规则 CRUD ==========
+    // 规则 CRUD
 
     fun addRule(mainVm: MainViewModel, rule: Rule) {
         val list = (mainVm.rules.value ?: mutableListOf()).toMutableList()
@@ -94,7 +94,7 @@ class RuleViewModel(application: Application) : AndroidViewModel(application) {
         else attemptRuleSync(mainVm, index)
     }
 
-    // ========== 本地规则同步 ==========
+    // 本地规则同步
 
     fun syncAllPendingRules(mainVm: MainViewModel) {
         val list = mainVm.rules.value ?: return
@@ -198,7 +198,7 @@ class RuleViewModel(application: Application) : AndroidViewModel(application) {
         } catch (_: Exception) {}
     }
 
-    // ========== 云平台规则同步 ==========
+    // 云平台规则同步
 
     fun attemptCloudRuleSync(mainVm: MainViewModel, index: Int) {
         val list = (mainVm.rules.value ?: return).toMutableList()
@@ -291,7 +291,7 @@ class RuleViewModel(application: Application) : AndroidViewModel(application) {
         attemptCloudRuleSync(mainVm, index)
     }
 
-    // ========== 条件任务检查 ==========
+    // 条件任务检查
 
     private val ruleAlertTime = mutableMapOf<String, Long>()
 
@@ -355,7 +355,7 @@ class RuleViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // ========== 辅助 ==========
+    // 辅助
 
     private fun cancelPendingCallbacks(ruleId: Long) {
         pendingTimeouts.remove(ruleId)?.let { mainHandler.removeCallbacks(it) }

@@ -16,10 +16,8 @@ import java.io.IOException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
 
-/**
- * OkHttp 保活拦截器：复用连接时自动发送轻量请求检测连接健康
- * 当连接空闲超过阈值时，在真正请求前先发一个 HEAD 探测
- */
+ // OkHttp 保活拦截器：复用连接时自动发送轻量请求检测连接健康
+ // 当连接空闲超过阈值时，在真正请求前先发一个 HEAD 探测
 class KeepAliveInterceptor : Interceptor {
     companion object {
         private const val TAG = "KeepAlive"
@@ -78,12 +76,10 @@ class NleCloudManager(private val context: Context) {
         })
         .build()
 
-    // ========== 异步辅助方法 ==========
+    //  异步辅助方法
 
-    /**
-     * 异步 GET — 使用 OkHttp dispatcher 线程池，回调在子线程执行
-     * 调用方需自行切主线程（mainHandler.post）
-     */
+     // 异步 GET — 使用 OkHttp dispatcher 线程池，回调在子线程执行
+     // 调用方需自行切主线程（mainHandler.post）
     private fun httpGetAsync(url: String, callback: (String) -> Unit) {
         val request = Request.Builder()
             .url(url)
@@ -103,9 +99,8 @@ class NleCloudManager(private val context: Context) {
         })
     }
 
-    /**
-     * 异步 POST — 使用 OkHttp dispatcher 线程池
-     */
+     // 异步 POST — 使用 OkHttp dispatcher 线程池
+
     private fun httpPostAsync(url: String, body: String, callback: (String) -> Unit) {
         val requestBody = body.toRequestBody("application/json".toMediaType())
         val request = Request.Builder()
@@ -127,9 +122,8 @@ class NleCloudManager(private val context: Context) {
         })
     }
 
-    /**
-     * 异步 PUT
-     */
+     // 异步 PUT
+
     private fun httpPutAsync(url: String, body: String, callback: (String) -> Unit) {
         val requestBody = body.toRequestBody("application/json".toMediaType())
         val request = Request.Builder()
@@ -151,9 +145,8 @@ class NleCloudManager(private val context: Context) {
         })
     }
 
-    /**
-     * 异步 DELETE
-     */
+     // 异步 DELETE
+
     private fun httpDeleteAsync(url: String, body: String? = null, callback: (String) -> Unit) {
         val requestBuilder = Request.Builder()
             .url(url)
@@ -179,9 +172,9 @@ class NleCloudManager(private val context: Context) {
         })
     }
 
-    // ========== 响应解析辅助 ==========
+    //  响应解析辅助
 
-    /** 解析 API 响应，返回 ResultObj Map，失败返回 null */
+    // 解析 API 响应，返回 ResultObj Map，失败返回 null
     private fun parseResultObj(resp: String): Map<*, *>? {
         if (resp.isBlank() || resp.trimStart().startsWith("<")) return null
         return try {
@@ -193,7 +186,7 @@ class NleCloudManager(private val context: Context) {
         }
     }
 
-    /** 解析 API 响应，返回 (Status, Msg, ResultObj)，用于需要检查 Status 的场景 */
+    // 解析 API 响应，返回 (Status, Msg, ResultObj)，用于需要检查 Status 的场景
     private fun parseApiResponse(resp: String): Triple<Int, String, Any?> {
         if (resp.isBlank() || resp.trimStart().startsWith("<")) return Triple(-1, "无响应", null)
         return try {
@@ -210,7 +203,7 @@ class NleCloudManager(private val context: Context) {
         }
     }
 
-    // ========== 凭证管理 ==========
+    // 凭证管理
 
     fun getSavedCredentials(): Pair<String, String> {
         return Pair(
@@ -678,17 +671,17 @@ class NleCloudManager(private val context: Context) {
         }
     }
 
-    /**
-     * 创建传感器/执行器
-     * @param deviceId 设备ID
-     * @param apiTag 传感器标识（如 "temp", "humi", "light" 等）
-     * @param name 传感器名称
-     * @param unit 单位（如 "°C", "%RH", "lux"）
-     * @param transType 传输类型：0=传感器，1=执行器
-     * @param operType 操作类型：0=只读，1=可控，3=开关，4=数值调节
-     * @param sensorType 数据类型：int=整数，float=浮点数，string=字符串，bool=布尔
-     * @return 创建成功返回SensorPoint，失败返回null
-     */
+
+     // 创建传感器/执行器
+     // @param deviceId 设备ID
+     // @param apiTag 传感器标识（如 "temp", "humi", "light" 等）
+     // @param name 传感器名称
+     // @param unit 单位（如 "°C", "%RH", "lux"）
+     // @param transType 传输类型：0=传感器，1=执行器
+     // @param operType 操作类型：0=只读，1=可控，3=开关，4=数值调节
+     // @param sensorType 数据类型：int=整数，float=浮点数，string=字符串，bool=布尔
+     // @return 创建成功返回SensorPoint，失败返回null
+
     fun createSensor(
         deviceId: Int,
         apiTag: String,
@@ -776,12 +769,12 @@ class NleCloudManager(private val context: Context) {
         }
     }
 
-    /**
-     * 删除传感器
-     * @param deviceId 设备ID
-     * @param apiTag 传感器标识
-     * @return 是否删除成功
-     */
+
+     // 删除传感器
+     // @param deviceId 设备ID
+     // @param apiTag 传感器标识
+     // @return 是否删除成功
+
     fun deleteSensor(deviceId: Int, apiTag: String, callback: (Boolean) -> Unit) {
         val url = "$BASE_URL/Devices/$deviceId/Sensors/$apiTag"
         Log.d(TAG, "DELETE $url")

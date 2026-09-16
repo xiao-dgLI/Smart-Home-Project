@@ -56,7 +56,7 @@ class ConnectionManager {
     var isConnected: Boolean = false
         private set
 
-    // ========== StateFlow (协程友好) ==========
+    // StateFlow
     private val _connectionStatus = MutableStateFlow("未连接")
     val connectionStatus: StateFlow<String> = _connectionStatus.asStateFlow()
 
@@ -75,7 +75,7 @@ class ConnectionManager {
     private val _logFlow = MutableSharedFlow<String>(extraBufferCapacity = 1)
     val logFlow: SharedFlow<String> = _logFlow.asSharedFlow()
 
-    // ========== Handler (向后兼容) ==========
+    // Handler
     private var handler: Handler? = null
     private val gson = Gson()
 

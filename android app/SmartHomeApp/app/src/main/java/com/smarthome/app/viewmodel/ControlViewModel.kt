@@ -10,16 +10,16 @@ import com.smarthome.app.repository.CloudRepository
 import com.smarthome.app.repository.DataStoreRepository
 import kotlinx.coroutines.launch
 
-/**
- * 控制页 ViewModel — 开关管理、执行器控制、云执行器创建/删除
- */
+
+ // 控制页 ViewModel — 开关管理、执行器控制、云执行器创建/删除
+
 class ControlViewModel(application: Application) : AndroidViewModel(application) {
 
     private val app = application as MainApplication
     private val cloudRepository: CloudRepository = app.cloudRepository
     private val dataStoreRepository: DataStoreRepository = app.dataStoreRepository
 
-    // ========== 开关 CRUD ==========
+    // 开关 CRUD
 
     fun addSwitch(mainVm: MainViewModel, sw: ControlSwitch) {
         val list = (mainVm.switches.value ?: mutableListOf()).toMutableList()
@@ -46,7 +46,7 @@ class ControlViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    // ========== 开关控制 ==========
+    // 开关控制
 
     fun toggleSwitch(mainVm: MainViewModel, index: Int) {
         val list = mainVm.switches.value ?: return
@@ -82,9 +82,9 @@ class ControlViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    /**
-     * @return true 操作已发起，false 设备离线操作被阻止
-     */
+
+     // @return true 操作已发起，false 设备离线操作被阻止
+
     fun toggleSwitchSilent(mainVm: MainViewModel, index: Int): Boolean {
         val list = mainVm.switches.value ?: return false
         if (index !in list.indices) return false
@@ -136,7 +136,7 @@ class ControlViewModel(application: Application) : AndroidViewModel(application)
         dataStoreRepository.saveSwitches(newList)
     }
 
-    // ========== 云平台执行器 CRUD ==========
+    // 云平台执行器 CRUD
 
     fun createCloudActuator(
         mainVm: MainViewModel,
@@ -185,7 +185,7 @@ class ControlViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    // ========== 辅助方法 ==========
+    // 辅助方法
 
     fun getCloudActuatorSwitches(mainVm: MainViewModel): List<ControlSwitch> {
         return mainVm.switches.value?.filter { it.isCloud } ?: emptyList()

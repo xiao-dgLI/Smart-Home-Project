@@ -4,10 +4,10 @@ import android.util.Log
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
-/**
- * 云平台设备管理器 — 将 NleCloudManager 的回调式 API 包装为 suspend 函数
- * 供 MainViewModel 协程调用
- */
+
+ // 云平台设备管理器 — 将 NleCloudManager 的回调式 API 包装为 suspend 函数
+ // 供 MainViewModel 协程调用
+
 class CloudDeviceManager(private val cloud: NleCloudManager) {
 
     companion object {

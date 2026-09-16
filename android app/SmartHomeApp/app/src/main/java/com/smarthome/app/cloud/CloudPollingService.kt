@@ -18,10 +18,10 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
-/**
- * 云平台轮询前台服务
- * 在应用前台/后台均持续运行，直到用户主动退出或清理进程
- */
+
+ // 云平台轮询前台服务
+ // 在应用前台/后台均持续运行，直到用户主动退出或清理进程
+
 class CloudPollingService : Service() {
 
     companion object {
@@ -52,7 +52,7 @@ class CloudPollingService : Service() {
         }
     }
 
-    /** 服务级协程作用域 — SupervisorJob 保证单个轮询失败不影响其他 */
+    // 服务级协程作用域 — SupervisorJob 保证单个轮询失败不影响其他
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private var sensorPollTimer: java.util.Timer? = null
@@ -129,7 +129,7 @@ class CloudPollingService : Service() {
         super.onDestroy()
     }
 
-    // ========== 轮询逻辑 ==========
+    //  轮询逻辑
 
     private fun startPolling() {
         stopPolling()
@@ -217,7 +217,7 @@ class CloudPollingService : Service() {
         pollCount = 0
     }
 
-    // ========== 通知 ==========
+    //  通知
 
     private fun createNotificationChannel() {
         val channel = NotificationChannel(

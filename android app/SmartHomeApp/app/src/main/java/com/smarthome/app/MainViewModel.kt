@@ -51,7 +51,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val pendingTimeouts = mutableMapOf<Long, Runnable>()
     private val retryRunnables = mutableMapOf<Long, Runnable>()
 
-    // ========== StateFlow ==========
+    // StateFlow
     private val _sensorData = MutableStateFlow(SensorData())
     val sensorData: StateFlow<SensorData> = _sensorData
 
@@ -212,7 +212,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // ========== Status Polling ==========
+    // Status Polling
 
     private fun startStatusPolling() {
         stopStatusPolling()
@@ -261,7 +261,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         } catch (_: Exception) {}
     }
 
-    // ========== Rule Sync ==========
+    // Rule Sync
 
     fun syncAllPendingRules() {
         val list = _rules.value ?: return
@@ -370,7 +370,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         } catch (_: Exception) {}
     }
 
-    // ========== Cloud Rule Sync ==========
+    // Cloud Rule Sync
 
     private fun attemptCloudRuleSync(index: Int) {
         val list = (_rules.value ?: return).toMutableList()
@@ -685,7 +685,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         retryRunnables.remove(ruleId)?.let { mainHandler.removeCallbacks(it) }
     }
 
-    // ========== Rule Check ==========
+    // Rule Check
 
     private val ruleAlertTime = mutableMapOf<String, Long>()
     private fun canAlert(key: String, now: Long): Boolean {
@@ -769,11 +769,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             val values = _cloudSensorValues.value ?: emptyMap()
             val apiTag = rule.cloudSensorApiTag
 
-            // 1) 精确匹配 DeviceID:ApiTag
+            // 精确匹配 DeviceID:ApiTag
             val exactKey = "${rule.cloudSensorDeviceId}:$apiTag"
             var raw = values[exactKey]
 
-            // 2) 精确匹配不到时，按 ApiTag 模糊查找（策略的 GatewayDeviceID 与传感器实际 DeviceID 可能不同）
+            // 精确匹配不到时，按 ApiTag 模糊查找（策略的 GatewayDeviceID 与传感器实际 DeviceID 可能不同）
             if (raw == null && apiTag.isNotBlank()) {
                 raw = values.entries.firstOrNull { it.key.endsWith(":$apiTag") }?.value
                 if (raw != null) {
@@ -801,7 +801,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // ========== Public Methods ==========
+    // Public Methods
 
     fun connectWifi(host: String, port: Int) {
         dataStoreRepository.saveConnectionMode("wifi", host, port)
@@ -821,7 +821,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         addLog("云平台 HTTP 连接成功")
     }
 
-    // ========== Cloud Device Refresh ==========
+    // Cloud Device Refresh
 
     fun refreshCloudDevices() {
         if (!cloudRepository.isConnected() || savedProjectId <= 0) {
@@ -1152,7 +1152,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         checkRules(data)
     }
 
-    // ========== Disconnect ==========
+    // Disconnect
 
     fun logoutCloud() {
         stopCloudService()
@@ -1209,7 +1209,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _fanState.value = newState
     }
 
-    // ========== Rule CRUD ==========
+    // Rule CRUD
 
     fun addRule(rule: Rule) {
         val list = (_rules.value ?: mutableListOf()).toMutableList()
@@ -1282,7 +1282,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // ========== Cloud Helpers ==========
+    // Cloud Helpers
 
     fun getCloudSensors(): List<SensorPoint> {
         return sensorMetaCache.values.filter { !it.isActuator }
@@ -1312,7 +1312,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         ">" -> 1; "<" -> 2; "==" -> 3; ">=" -> 4; "<=" -> 5; else -> 1
     }
 
-    // ========== Sensor Card Management ==========
+    // Sensor Card Management
 
     fun addSensorDevice(item: SensorDeviceItem) {
         val list = _sensorDevices.value ?: mutableListOf()
@@ -1481,7 +1481,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         return null
     }
 
-    // ========== Switch Management ==========
+    // Switch Management
 
     fun addSwitch(sw: ControlSwitch) {
         val list = (_switches.value ?: mutableListOf()).toMutableList()
@@ -1586,7 +1586,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // ========== Notification ==========
+    // Notification
 
     fun saveNotifSettings(settings: Map<String, Any>) = dataStoreRepository.saveNotifSettings(settings)
 
@@ -1603,7 +1603,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _logMessages.value = mutableListOf()
     }
 
-    // ========== Private Helpers ==========
+    // Private Helpers
 
     private fun handleControlAck(json: String) {
         try {
@@ -1684,7 +1684,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         savedProjectName = name
     }
 
-    // ========== Auto Login ==========
+    // Auto Login
 
     fun autoLogin() {
         val (account, password) = cloudRepository.getSavedCredentials()
@@ -1834,7 +1834,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // ========== 子 ViewModel 委托方法 ==========
+    // 子 ViewModel 委托方法
 
     fun updateSensorDevices(list: List<SensorDeviceItem>) {
         _sensorDevices.value = list.toMutableList()

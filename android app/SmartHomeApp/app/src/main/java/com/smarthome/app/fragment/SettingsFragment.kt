@@ -271,10 +271,9 @@ class SettingsFragment : Fragment() {
         })
     }
 
-    /**
-     * 比较版本号：newVersion > currentVersion 返回 true
-     * 支持 "1.2.3" 或 "1.2" 格式
-     */
+
+     // 比较版本号：newVersion > currentVersion 返回 true
+
     private fun isVersionNewer(newVersion: String, currentVersion: String): Boolean {
         val newParts = newVersion.split(".").map { it.toIntOrNull() ?: 0 }
         val curParts = currentVersion.split(".").map { it.toIntOrNull() ?: 0 }

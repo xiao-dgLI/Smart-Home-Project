@@ -13,7 +13,7 @@ class LocalRepository(private val cm: ConnectionManager) {
 
     val connectionManager: ConnectionManager get() = cm
 
-    // ========== 状态 Flow ==========
+    // 状态 Flow
 
     private val _connectionStatus = MutableStateFlow("未连接")
     val connectionStatus: StateFlow<String> = _connectionStatus
@@ -39,7 +39,7 @@ class LocalRepository(private val cm: ConnectionManager) {
     private val _logMessage = MutableStateFlow<String?>(null)
     val logMessage: StateFlow<String?> = _logMessage
 
-    // ========== 连接管理 ==========
+    // 连接管理
 
     val isConnected: Boolean get() = cm.isConnected
     val connectionMode: String get() = cm.connectionMode
@@ -50,7 +50,7 @@ class LocalRepository(private val cm: ConnectionManager) {
 
     fun disconnect() = cm.disconnect()
 
-    // ========== 发送命令 ==========
+    // 发送命令
 
     fun sendCommand(device: String, action: String) = cm.sendCommand(device, action)
 
@@ -58,7 +58,7 @@ class LocalRepository(private val cm: ConnectionManager) {
 
     fun sendRawCommand(data: String) = cm.sendRawCommand(data)
 
-    // ========== Handler 设置 ==========
+    // Handler 设置
 
     fun setHandler(handler: Handler) = cm.setHandler(handler)
 }

@@ -81,11 +81,11 @@ class NleCloudTcpManager {
         }.start()
     }
 
-    /**
-     * 发送控制命令到云平台
-     * @param apiTag 传感器标识名（如 "light"、"fan"）
-     * @param data 命令值（1=开，0=关）
-     */
+
+     // 发送控制命令到云平台
+     // @param apiTag 传感器标识名（如 "light"、"fan"）
+     // @param data 命令值（1=开，0=关）
+
     fun sendCommand(apiTag: String, data: Int) {
         if (!isConnected) {
             Log.w(TAG, "TCP 未连接，无法发送命令")

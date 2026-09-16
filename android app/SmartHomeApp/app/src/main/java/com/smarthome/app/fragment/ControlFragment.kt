@@ -115,16 +115,16 @@ class ControlFragment : Fragment() {
         return view
     }
 
-    /**
-     * 选择添加开关类型对话框
-     */
+
+     // 选择添加开关类型对话框
+
     private fun showChooseAddSwitchTypeDialog() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("选择添加方式")
             .setItems(
                 arrayOf(
-                    "📱 添加本地开关（ZigBee设备）",
-                    "➕ 创建云平台执行器"
+                    "添加本地开关",
+                    "创建云平台执行器"
                 )
             ) { _, which ->
                 when (which) {
@@ -136,9 +136,9 @@ class ControlFragment : Fragment() {
             .show()
     }
 
-    /**
-     * 创建云平台执行器对话框
-     */
+
+     // 创建云平台执行器对话框
+
     private fun showCreateCloudActuatorDialog() {
         val devices = vm.getSavedDeviceList()
         if (devices.isEmpty()) {
@@ -240,9 +240,8 @@ class ControlFragment : Fragment() {
             .show()
     }
 
-    /**
-     * 执行创建云平台执行器
-     */
+
+     // 执行创建云平台执行器
     private fun doCreateCloudActuator(
         device: com.smarthome.app.cloud.DeviceBaseInfo,
         name: String, apiTag: String, operType: Int

@@ -12,16 +12,16 @@ import com.smarthome.app.repository.CloudRepository
 import com.smarthome.app.repository.DataStoreRepository
 import kotlinx.coroutines.launch
 
-/**
- * 设置页 ViewModel — WiFi/蓝牙/云平台连接、项目管理、设备管理、自动登录
- */
+
+ // 设置页 ViewModel — WiFi/蓝牙/云平台连接、项目管理、设备管理、自动登录
+
 class SettingsViewModel(application: Application) : AndroidViewModel(application) {
 
     private val app = application as MainApplication
     private val cloudRepository: CloudRepository = app.cloudRepository
     private val dataStoreRepository: DataStoreRepository = app.dataStoreRepository
 
-    // ========== WiFi/蓝牙连接 ==========
+    // WiFi/蓝牙连接
 
     fun connectWifi(mainVm: MainViewModel, host: String, port: Int) {
         dataStoreRepository.saveConnectionMode("wifi", host, port)
@@ -36,7 +36,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         mainVm.disconnect()
     }
 
-    // ========== 云平台登录 ==========
+    // 云平台登录
 
     fun login(account: String, password: String, callback: (Boolean, String) -> Unit) {
         viewModelScope.launch {
@@ -49,7 +49,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         mainVm.logoutCloud()
     }
 
-    // ========== 云平台连接 ==========
+    // 云平台连接
 
     fun connectToProject(mainVm: MainViewModel, projectId: Int, projectName: String, callback: (Boolean) -> Unit) {
         viewModelScope.launch {
@@ -65,7 +65,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         mainVm.disconnectCloudOnly()
     }
 
-    // ========== 项目管理 ==========
+    // 项目管理
 
     suspend fun getProjects(): List<ProjectInfo> = cloudRepository.getProjects()
 
@@ -105,7 +105,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    // ========== 设备管理 ==========
+    // 设备管理
 
     suspend fun getDevices(projectId: Int): List<DeviceBaseInfo> = cloudRepository.getDevices(projectId)
 
@@ -133,7 +133,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    // ========== 凭证管理 ==========
+    // 凭证管理
 
     fun getSavedCredentials(): Pair<String, String> = cloudRepository.getSavedCredentials()
     fun saveMqttCredentials(tag: String, key: String) = cloudRepository.saveMqttCredentials(tag, key)

@@ -10,16 +10,16 @@ import com.smarthome.app.repository.CloudRepository
 import com.smarthome.app.repository.DataStoreRepository
 import kotlinx.coroutines.launch
 
-/**
- * 仪表盘 ViewModel — 传感器卡片管理、云传感器创建/删除
- */
+
+ // 仪表盘 ViewModel — 传感器卡片管理、云传感器创建/删除
+
 class DashboardViewModel(application: Application) : AndroidViewModel(application) {
 
     private val app = application as MainApplication
     private val cloudRepository: CloudRepository = app.cloudRepository
     private val dataStoreRepository: DataStoreRepository = app.dataStoreRepository
 
-    // ========== 传感器卡片 ==========
+    // 传感器卡片
 
     fun addSensorDevice(mainVm: MainViewModel, item: SensorDeviceItem) {
         val list = (mainVm.sensorDevices.value ?: mutableListOf()).toMutableList()
@@ -37,7 +37,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    // ========== 云平台传感器 CRUD ==========
+    // 云平台传感器 CRUD
 
     fun createCloudSensor(
         mainVm: MainViewModel,
@@ -90,7 +90,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    // ========== 辅助方法 ==========
+    // 辅助方法
 
     fun getCloudSensorDeviceItems(mainVm: MainViewModel): List<SensorDeviceItem> {
         return mainVm.sensorDevices.value?.filter { it.source == "cloud" } ?: emptyList()

@@ -118,9 +118,8 @@ class DashboardFragment : Fragment() {
         }
     }
 
-    /**
-     * 添加传感器类型选择对话框
-     */
+     // 添加传感器类型选择对话框
+
     private fun showAddTypeDialog() {
         val isCloudConnected = vm.cloudConnected.value == true
 
@@ -133,8 +132,8 @@ class DashboardFragment : Fragment() {
             .setTitle("选择添加方式")
             .setItems(
                 arrayOf(
-                    "📱 添加本地传感器（预设类型）",
-                    "➕ 创建云平台传感器"
+                    "添加本地传感器",
+                    "创建云平台传感器"
                 )
             ) { _, which ->
                 when (which) {
@@ -146,9 +145,9 @@ class DashboardFragment : Fragment() {
             .show()
     }
 
-    /**
-     * 添加本地传感器对话框
-     */
+
+     // 添加本地传感器对话框
+
     private fun showAddLocalSensorDialog() {
         val allTypes = SensorDeviceItem.getAllTypes()
         val currentTypes = sensorAdapter.getItems()
@@ -174,9 +173,9 @@ class DashboardFragment : Fragment() {
             .show()
     }
 
-    /**
-     * 创建云平台传感器对话框
-     */
+
+     // 创建云平台传感器对话框
+
     private fun showCreateCloudSensorDialog() {
         val devices = vm.getSavedDeviceList()
         if (devices.isEmpty()) {
@@ -320,9 +319,9 @@ class DashboardFragment : Fragment() {
             }
     }
 
-    /**
-     * 名称或标识名重复时的确认对话框
-     */
+
+     // 名称或标识名重复时的确认对话框
+
     private fun showDuplicateConfirmDialog(
         device: com.smarthome.app.cloud.DeviceBaseInfo,
         suggestedName: String, suggestedApiTag: String,
@@ -351,9 +350,9 @@ class DashboardFragment : Fragment() {
             .show()
     }
 
-    /**
-     * 执行创建云平台传感器
-     */
+
+     // 执行创建云平台传感器
+
     private fun doCreateCloudSensor(
         device: com.smarthome.app.cloud.DeviceBaseInfo,
         name: String, apiTag: String, unit: String,
@@ -368,7 +367,7 @@ class DashboardFragment : Fragment() {
             apiTag = apiTag,
             name = name,
             unit = unit,
-            transType = 0, // 固定为传感器（只上报）
+            transType = 0, // 固定为传感器
             operType = 0,
             sensorType = sensorType
         ) { success, message ->

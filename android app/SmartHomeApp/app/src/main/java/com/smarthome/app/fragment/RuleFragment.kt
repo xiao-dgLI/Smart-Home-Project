@@ -100,8 +100,8 @@ class RuleFragment : Fragment() {
             .setTitle("选择策略类型")
             .setItems(
                 arrayOf(
-                    "📱 本地策略（ZigBee 设备直连控制）",
-                    "☁️ 云平台策略（同步到 NleCloud 自动执行）"
+                    "本地策略",
+                    "云平台策略"
                 )
             ) { _, which ->
                 when (which) {
@@ -120,8 +120,8 @@ class RuleFragment : Fragment() {
             .setTitle("选择任务模式")
             .setItems(
                 arrayOf(
-                    "⏰ 条件任务（当传感器满足条件时自动执行）",
-                    "📅 定时任务（在指定时间自动执行）"
+                    "条件任务（当传感器满足条件时自动执行）",
+                    "定时任务（在指定时间自动执行）"
                 )
             ) { _, which ->
                 when (which) {
@@ -133,7 +133,7 @@ class RuleFragment : Fragment() {
             .show()
     }
 
-    // ==================== 本地 ZigBee ====================
+    // 本地
 
     private fun showLocalRuleDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_add_rule, null)
@@ -206,7 +206,7 @@ class RuleFragment : Fragment() {
     // 云平台 - 条件任务
 
     private fun showCloudConditionDialog() {
-        // 用设备列表（有正确DeviceID），不用sensorMetaCache
+        // 用设备列表（DeviceID）
         val sensorItems = vm.getCloudSensorDeviceItems()
         val actuatorItems = vm.getCloudActuatorSwitches()
 

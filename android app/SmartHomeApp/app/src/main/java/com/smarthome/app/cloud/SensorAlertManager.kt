@@ -7,10 +7,10 @@ import com.smarthome.app.model.NotificationSetting
 import com.smarthome.app.model.SensorData
 import com.smarthome.app.notification.NotificationHelper
 
-/**
- * 传感器告警管理器 — 从 MainViewModel 提取的告警检查逻辑
- * 支持动态通知设置（云平台传感器）
- */
+
+ // 传感器告警管理器 — 从 MainViewModel 提取的告警检查逻辑
+ // 支持动态通知设置（云平台传感器）
+
 class SensorAlertManager(context: Context) {
 
     private val prefs = context.getSharedPreferences("smart_home_prefs", Context.MODE_PRIVATE)
@@ -31,10 +31,10 @@ class SensorAlertManager(context: Context) {
         checkGas(data, now)
     }
 
-    /**
-     * 检查云平台传感器阈值告警
-     * @param sensorValues 传感器实时值，key格式为 "deviceId:apiTag"
-     */
+
+     // 检查云平台传感器阈值告警
+     // @param sensorValues 传感器实时值，key格式为 "deviceId:apiTag"
+
     fun checkCloudSensorAlerts(sensorValues: Map<String, String>) {
         if (!prefs.getBoolean("notif_enabled", true)) return
 

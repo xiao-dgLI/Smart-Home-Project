@@ -3,9 +3,9 @@ package com.smarthome.app.util
 import com.smarthome.app.model.SensorData
 import com.smarthome.app.model.SensorDeviceItem
 
-/**
- * 传感器值格式化工具 — 消除 Adapter 中的重复 when 分支
- */
+
+ // 传感器值格式化工具 — 消除 Adapter 中的重复 when 分支
+
 object SensorValueFormatter {
 
     data class FormattedValue(

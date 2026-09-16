@@ -163,15 +163,15 @@ class NotificationHelper(private val context: Context) {
         }
     }
 
-    /**
-     * 云平台传感器阈值告警
-     * @param sensorName 传感器名称
-     * @param deviceName 设备名称
-     * @param currentValue 当前值
-     * @param threshold 阈值
-     * @param unit 单位
-     * @param isAbove true=高于阈值告警，false=低于阈值告警
-     */
+
+     // 云平台传感器阈值告警
+     // @param sensorName 传感器名称
+     // @param deviceName 设备名称
+     // @param currentValue 当前值
+     // @param threshold 阈值
+     // @param unit 单位
+     // @param isAbove true=高于阈值告警，false=低于阈值告警
+
     fun sendCloudSensorAlert(
         sensorName: String,
         deviceName: String,

@@ -124,9 +124,9 @@ class NotificationFragment : Fragment() {
         loadRuleNotifSwitch()
     }
 
-    /**
-     * 添加通知对话框
-     */
+
+     // 添加通知对话框
+
     private fun showAddNotificationDialog() {
         val isCloudConnected = vm.cloudConnected.value == true
 
@@ -238,9 +238,9 @@ class NotificationFragment : Fragment() {
             .show()
     }
 
-    /**
-     * 加载设置
-     */
+
+     // 加载设置
+
     private fun loadSettings() {
         val json = vm.getNotifSettings()["notification_settings"] as? String
         if (json != null && json.isNotEmpty()) {
@@ -257,18 +257,18 @@ class NotificationFragment : Fragment() {
         adapter.submitList(notificationSettings)
     }
 
-    /**
-     * 迁移旧的设置
-     */
+
+     // 迁移旧的设置
+
     private fun migrateOldSettings() {
         notificationSettings = mutableListOf()
         // 这里可以根据需要添加默认的通知设置
         adapter.submitList(notificationSettings)
     }
 
-    /**
-     * 保存设置
-     */
+
+     // 保存设置
+
     private fun saveSettings() {
         val json = vm.gson.toJson(notificationSettings)
         vm.saveNotifSettings(mapOf("notification_settings" to json))
